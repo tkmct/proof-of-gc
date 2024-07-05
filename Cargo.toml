@@ -7,3 +7,4 @@ edition = "2021"
 halo2-aes = { path = "../halo2-aes" }
 mpz-circuits = { path = "../mpz/crates/mpz-circuits" }
 mpz-garble-core = { path = "../mpz/crates/mpz-garble-core" }
+mpz-core = { path = "../mpz/crates/mpz-core" }
