@@ -1,8 +1,8 @@
-use halo2_aes::halo2_proofs::dev::MockProver;
 use mpz_circuits::{Circuit, CircuitBuilder};
 use mpz_garble_core::{ChaChaEncoder, Encoder, Generator};
 
-use proof_of_gc::GenCircuit;
+use halo2_proofs::dev::MockProver;
+use proof_of_gc::{halo2_proofs, EvalCircuit, GenCircuit};
 
 fn and_circ() -> Circuit {
     let builder = CircuitBuilder::new();
@@ -28,13 +28,10 @@ fn main() {
     // randomly sample zero labels for every output gates for AND gate
     // For every and gate, construct half gate
     // Output decoding data
-    // let xor_circuit = xor_circ();
-    // println!("XOR_CIRC: {:?}", xor_circuit);
 
     let and_circuit = and_circ();
     println!("AND_CIRC: {:?}", and_circuit);
 
-    // garbler.garble(xor_circuit);
     let encoder = ChaChaEncoder::new([0; 32]);
     let inputs = and_circuit
         .inputs()
@@ -50,9 +47,16 @@ fn main() {
 
     // Prove garbled circuit generation
     let k = 20;
-    let gen_circ = GenCircuit::new(and_circuit, enc_gates);
-    let mock_prover = MockProver::run(k, &gen_circ, vec![]).unwrap();
-    mock_prover.assert_satisfied();
+    let gen_circ = GenCircuit::new(and_circuit.clone(), enc_gates.clone());
+    // TODO: properly set instances
+    let mock_gen = MockProver::run(k, &gen_circ, vec![]).unwrap();
+    mock_gen.assert_satisfied();
 
     // garbled circuit evaluation
+    // TODO: properly set encoded labels
+    let inputs = vec![];
+    let eval_circ = EvalCircuit::new(and_circuit, enc_gates, inputs);
+    // TODO: properly set instance
+    let mock_eval = MockProver::run(k, &eval_circ, vec![]).unwrap();
+    mock_eval.assert_satisfied();
 }
